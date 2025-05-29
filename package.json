@@ -26,6 +26,9 @@
     "start": "yarn workspace demo start",
     "gen-api": "yarn workspace demo gen-api-docs all --all-versions",
     "clean-api": "yarn workspace demo clean-api-docs all --all-versions",
+    "test:playwright": "npx playwright test",
+    "test:playwright:ci": "start-server-and-test 'yarn build-demo && yarn workspace demo serve --port 3000' http://localhost:3000 'yarn test:playwright'",
+    "test:playwright:update": "npx playwright test --update-snapshots",
     "cy:run": "cypress run",
     "cy:open": "cypress open",
     "format": "prettier . --check --ignore-unknown --ignore-path .prettierignore",
@@ -42,6 +45,7 @@
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@eslint-community/eslint-utils": "^4.4.0",
+    "@playwright/test": "^1.52.0",
     "@testing-library/cypress": "^8.0.1",
     "@types/jest": "^27.0.2",
     "@types/node": "^17.0.2",

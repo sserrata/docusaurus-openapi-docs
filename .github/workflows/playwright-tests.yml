@@ -1,0 +1,68 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  FORCE_COLOR: true
+  NODE_OPTIONS: --max-old-space-size=4096 # Increase memory for Node.js
+
+jobs:
+  test:
+    timeout-minutes: 30 # Set a timeout for the job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "yarn"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright # Path to Playwright's browser cache
+          key: ${{ runner.os }}-playwright-chromium-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-chromium-
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium # Install only chromium and its OS dependencies
+
+      # Note: The 'yarn test:playwright:ci' script already includes 'yarn build-demo'.
+      # However, running it here ensures that if the server setup within 'start-server-and-test' fails,
+      # we still have a build potentially for other artifact uploads or debugging.
+      # It also makes the build step explicit in the workflow.
+      - name: Build demo site
+        run: yarn build-demo
+
+      - name: Run Playwright tests
+        run: yarn test:playwright:ci
+
+      - name: Upload Playwright report
+        if: always() # Always upload the report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/ # Default Playwright HTML report output folder
+          retention-days: 7
+
+      - name: Upload snapshot artifacts on failure
+        if: failure() # Only upload if the previous steps (tests) failed
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-snapshot-diffs
+          path:
+            | # Upload the entire snapshots directory which will contain expected, actual, and diffs
+            playwright_snapshots/ 
+            test-results/ # This directory might contain additional failure info or actual/diffs if names are different
+          retention-days: 7

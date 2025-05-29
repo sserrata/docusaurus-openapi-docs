@@ -143,3 +143,7 @@ demo/**/versions.json
 
 .idea
 .tool-versions
+
+# Playwright specific
+test-results/
+playwright-report/
