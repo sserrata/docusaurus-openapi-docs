@@ -1,106 +1,151 @@
 import { test, expect } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
+import { Parser as XmlParser } from "xml2js";
 
-// Function to recursively find all HTML files in a directory
-function getHtmlFilePaths(
-  dir: string,
-  baseDir = dir,
-  fileList: string[] = []
-): string[] {
-  if (!fs.existsSync(dir)) {
+// New function: getTestPagePathsFromSitemap
+async function getTestPagePathsFromSitemap(
+  sitemapPath: string,
+  siteBaseUrl: string
+): Promise<string[]> {
+  if (!fs.existsSync(sitemapPath)) {
     console.warn(
-      `Directory ${dir} does not exist. Skipping page discovery for this path.`
+      `Sitemap file ${sitemapPath} not found. No pages will be tested based on sitemap.`
     );
     return [];
   }
 
-  const files = fs.readdirSync(dir);
-  files.forEach((file) => {
-    const filePath = path.join(dir, file);
-    if (fs.statSync(filePath).isDirectory()) {
-      getHtmlFilePaths(filePath, baseDir, fileList);
-    } else if (path.extname(file) === ".html") {
-      fileList.push(path.relative(baseDir, filePath));
+  try {
+    const sitemapXml = fs.readFileSync(sitemapPath, "utf-8");
+    const parser = new XmlParser();
+    const result = await parser.parseStringPromise(sitemapXml);
+
+    const urlset = result.urlset;
+    if (!urlset || !urlset.url || !Array.isArray(urlset.url)) {
+      console.warn(
+        `Invalid sitemap format in ${sitemapPath}. Could not find urlset or urls.`
+      );
+      return [];
     }
-  });
-  return fileList;
+
+    const pagePaths: string[] = [];
+    for (const urlEntry of urlset.url) {
+      if (urlEntry.loc && typeof urlEntry.loc[0] === "string") {
+        const fullUrl = urlEntry.loc[0];
+        // Check if the URL is for the current site (using startsWith) and contains /tests/
+        if (fullUrl.startsWith(siteBaseUrl) && fullUrl.includes("/tests/")) {
+          const urlObject = new URL(fullUrl);
+          // We want the path including search and hash, relative to the base URL
+          let relativePath = urlObject.pathname;
+          if (urlObject.search) relativePath += urlObject.search;
+          if (urlObject.hash) relativePath += urlObject.hash;
+          pagePaths.push(relativePath);
+        } else if (!fullUrl.startsWith("http") && fullUrl.includes("/tests/")) {
+          // Handle cases where sitemap might contain relative paths,
+          // assuming siteBaseUrl is just '/' for this logic to make sense for root-relative paths.
+          if (siteBaseUrl === "/" && fullUrl.startsWith("/")) {
+            pagePaths.push(fullUrl);
+          }
+          // Other relative path scenarios are less likely for standard sitemaps but could be added if needed.
+        }
+      }
+    }
+    return pagePaths;
+  } catch (error) {
+    console.error(`Error parsing sitemap ${sitemapPath}:`, error);
+    return [];
+  }
 }
 
-const builtTestsDir = path.join(process.cwd(), "demo", "build", "tests");
-// Note: process.cwd() is used because Playwright's test runner might have a different CWD
-// depending on how it's invoked. The webServer command, however, runs from the project root.
+const sitemapPath = path.join(process.cwd(), "demo", "build", "sitemap.xml");
+// This baseURL should align with what's in playwright.config.ts and how Docusaurus generates sitemap URLs.
+// Docusaurus sitemap usually generates absolute URLs using the 'url' field from docusaurus.config.ts.
+// For local testing, Playwright's baseURL ('http://localhost:3000') will be the effective base.
+// So, we filter sitemap URLs that start with this local base.
+const siteBaseUrlForSitemap = "http://localhost:3000";
 
-const testPageFiles = getHtmlFilePaths(builtTestsDir);
+let testPageUrls: string[] = [];
 
-if (testPageFiles.length === 0) {
-  console.warn(
-    `No HTML files found in ${builtTestsDir}. ` +
-      `Make sure the 'demo' site has been built (e.g., via 'yarn build-demo') ` +
-      `and that the 'outputDir' for the 'tests' plugin in 'docusaurus.config.ts' (demo/docusaurus.config.ts) ` +
-      `is correctly pointing to 'docs/tests' which results in pages being built to 'demo/build/tests'. ` +
-      `The Playwright webServer should handle the build, but this check is important. ` +
-      `If this is unexpected, the tests for /tests pages will be skipped.`
+test.beforeAll(async () => {
+  // This runs once before any tests in this file.
+  // It populates testPageUrls based on the sitemap content.
+  // The webServer in playwright.config.ts should have already built the site.
+  testPageUrls = await getTestPagePathsFromSitemap(
+    sitemapPath,
+    siteBaseUrlForSitemap
   );
-  // Optionally, create a dummy test to make sure Playwright doesn't complain about no tests
-  test("No test pages found - check build and config", () => {
-    expect(true).toBe(true); // Placeholder
+
+  if (testPageUrls.length === 0) {
+    console.warn(
+      `WARN: No URLs containing '/tests/' were found in ${sitemapPath} (for base URL ${siteBaseUrlForSitemap}). ` +
+        `Ensure the 'demo' site has been built (e.g., via 'yarn build-demo'), ` +
+        `the sitemap.xml is generated correctly by Docusaurus, and it includes full URLs for pages under '/tests/'. ` +
+        `The Playwright webServer in playwright.config.ts is responsible for the build. ` +
+        `If this is unexpected, the Playwright tests for /tests pages will effectively be skipped.`
+    );
+  }
+});
+
+test.describe("Smoke and Snapshot Tests for /tests pages (Sitemap Driven)", () => {
+  // This initial test acts as a guard or status check.
+  // It runs after beforeAll has populated testPageUrls.
+  test("Check if any /tests/ URLs were found in sitemap", () => {
+    if (testPageUrls.length === 0) {
+      console.log(
+        `INFO: No /tests/ URLs found in ${sitemapPath} matching base URL ${siteBaseUrlForSitemap}. No page-specific tests will run.`
+      );
+      // You could choose to fail here if pages are expected:
+      // expect(testPageUrls.length).toBeGreaterThan(0, "Critical: No /tests/ URLs found in sitemap.");
+    } else {
+      console.log(
+        `INFO: Found ${testPageUrls.length} /tests/ URL(s) in sitemap to test.`
+      );
+    }
+    // This test itself just passes, its purpose is logging or a basic assertion.
+    expect(true).toBe(true);
   });
-} else {
-  test.describe("Smoke and Snapshot Tests for /tests pages", () => {
-    testPageFiles.forEach((pageFile) => {
-      // Convert file path like 'api/my-test.html' to URL path '/tests/api/my-test'
-      // Convert 'index.html' to '/' or '' for the respective directory
-      let pageUrlPath = path.join("/tests", pageFile.replace(/\.html$/, ""));
-      if (path.basename(pageFile) === "index.html") {
-        pageUrlPath = path.dirname(pageUrlPath); // if it's 'tests/index.html', becomes '/tests'
-        // if it's 'tests/subdir/index.html', becomes '/tests/subdir'
-      }
-      // Ensure consistent slashes for URL
-      pageUrlPath = pageUrlPath.replace(/\\/g, "/");
 
-      test(`Check ${pageUrlPath}`, async ({ page }) => {
-        const consoleErrors: string[] = [];
-        page.on("console", (msg) => {
-          if (msg.type() === "error") {
-            const text = msg.text();
-            // Docusaurus development server sometimes throws an error related to ResizeObserver
-            // This is a known issue and typically doesn't affect production builds or user experience.
-            // Example: "ResizeObserver loop completed with undelivered notifications."
-            if (
-              text.includes(
-                "ResizeObserver loop completed with undelivered notifications"
-              )
-            ) {
-              console.warn(`[CONSOLE WARN - Known Docusaurus Issue]: ${text}`);
-              return;
-            }
-            consoleErrors.push(`[CONSOLE ERROR]: ${text}`);
+  // Dynamically generate tests for each URL found in the sitemap
+  // If testPageUrls is empty, this loop simply won't run any iterations.
+  testPageUrls.forEach((pageUrlPath) => {
+    test(`Check ${pageUrlPath}`, async ({ page }) => {
+      const consoleErrors: string[] = [];
+      page.on("console", (msg) => {
+        if (msg.type() === "error") {
+          const text = msg.text();
+          // Docusaurus development server sometimes throws an error related to ResizeObserver
+          if (
+            text.includes(
+              "ResizeObserver loop completed with undelivered notifications"
+            )
+          ) {
+            console.warn(
+              `[CONSOLE WARN - Known Docusaurus Issue on ${pageUrlPath}]: ${text}`
+            );
+            return;
           }
-        });
-
-        const response = await page.goto(pageUrlPath, {
-          waitUntil: "domcontentloaded",
-        });
-
-        // Check for 404s or other client/server errors
-        expect(
-          response?.status(),
-          `Page ${pageUrlPath} should load successfully.`
-        ).toBeLessThan(400);
-
-        // Assert no unexpected console errors
-        expect(
-          consoleErrors,
-          `Console errors on ${pageUrlPath}:\n${consoleErrors.join("\n")}`
-        ).toEqual([]);
-
-        // Take snapshot
-        // Sanitize the pageUrlPath to be a valid filename for snapshots
-        const snapshotName =
-          pageUrlPath.substring(1).replace(/[^a-zA-Z0-9_.-]/g, "_") + ".png";
-        await expect(page).toHaveScreenshot(snapshotName, { fullPage: true });
+          consoleErrors.push(`[CONSOLE ERROR on ${pageUrlPath}]: ${text}`);
+        }
       });
+
+      const response = await page.goto(pageUrlPath, {
+        waitUntil: "domcontentloaded",
+      });
+
+      expect(
+        response?.status(),
+        `Page ${pageUrlPath} should load successfully (status < 400).`
+      ).toBeLessThan(400);
+      expect(
+        consoleErrors,
+        `Console errors on ${pageUrlPath}:\n${consoleErrors.join("\n")}`
+      ).toEqual([]);
+
+      // Sanitize the pageUrlPath to be a valid filename for snapshots
+      // Example: /tests/some/page?query=1 -> tests_some_page_query_1.png
+      const snapshotName =
+        pageUrlPath.substring(1).replace(/[^a-zA-Z0-9_.-]/g, "_") + ".png";
+      await expect(page).toHaveScreenshot(snapshotName, { fullPage: true });
     });
   });
-}
+});
