@@ -7,10 +7,14 @@
 
 import React, { useCallback, useState, useRef, useEffect } from "react";
 
-import { CopyButtonProps } from "@docusaurus/theme-common/internal";
 import { translate } from "@docusaurus/Translate";
+import type { Props as BaseCopyButtonProps } from "@theme/CodeBlock/CopyButton";
 import clsx from "clsx";
 import copy from "copy-text-to-clipboard";
+
+export interface CopyButtonProps extends BaseCopyButtonProps {
+  code: string;
+}
 
 export default function CopyButton({
   code,
