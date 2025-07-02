@@ -62,3 +62,18 @@ yarn test
 4. **Commit** all changes with the message `Prepare release vX.Y.Z`.
 
 Once merged, the `release.yaml` workflow will publish the release automatically.
+
+## Handling Issues and Pull Requests
+
+### Issues
+
+- Triage each report to figure out whether it's a question, documentation request, or bug.
+- Investigate carefully to confirm the problem is within this project and not caused by user error, dependency mismatches, or other external factors.
+- Consider how a fix might affect existing features and avoid any regression or breaking change.
+
+### Pull Requests
+
+- Start by checking if the contribution updates documentation, fixes a bug, or adds or enhances a feature.
+- Ensure the proposal fits the scope of the project and doesn't duplicate existing docs or functionality.
+- Provide a summary of whether the pull request is ready to merge or what changes are still needed from the contributor.
+- Consider how merging the pull request might affect existing features and make sure it does not introduce regressions or breaking changes.
