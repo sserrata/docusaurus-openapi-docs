@@ -61,7 +61,8 @@ jobs:
     name: Analyze Unsafe
     needs: precheck
     runs-on: ubuntu-latest
-    environment: default
+    environment:
+      name: non-member-approval
     permissions:
       contents: read
       security-events: write
