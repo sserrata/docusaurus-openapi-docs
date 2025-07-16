@@ -126,6 +126,9 @@ jobs:
     needs: build
     if: ${{ github.repository == 'PaloAltoNetworks/docusaurus-openapi-docs' && !failure() && !cancelled() }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     outputs:
       preview_url: ${{ steps.deploy_preview.outputs.details_url }}
 
