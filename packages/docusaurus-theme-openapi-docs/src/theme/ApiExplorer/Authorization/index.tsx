@@ -7,6 +7,7 @@
 
 import React from "react";
 
+import { translate } from "@docusaurus/Translate";
 import FormItem from "@theme/ApiExplorer/FormItem";
 import FormSelect from "@theme/ApiExplorer/FormSelect";
 import FormTextInput from "@theme/ApiExplorer/FormTextInput";
@@ -32,7 +33,12 @@ function Authorization() {
   return (
     <div>
       {optionKeys.length > 1 && (
-        <FormItem label="Security Scheme">
+        <FormItem
+          label={translate({
+            id: "theme.authorization.securityScheme",
+            message: "Security Scheme",
+          })}
+        >
           <FormSelect
             options={optionKeys}
             value={selected}
@@ -45,9 +51,18 @@ function Authorization() {
       {selectedAuth.map((a: any) => {
         if (a.type === "http" && a.scheme === "bearer") {
           return (
-            <FormItem label="Bearer Token" key={a.key + "-bearer"}>
+            <FormItem
+              label={translate({
+                id: "theme.authorization.bearerToken",
+                message: "Bearer Token",
+              })}
+              key={a.key + "-bearer"}
+            >
               <FormTextInput
-                placeholder="Bearer Token"
+                placeholder={translate({
+                  id: "theme.authorization.bearerToken",
+                  message: "Bearer Token",
+                })}
                 password
                 value={data[a.key].token ?? ""}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,9 +82,18 @@ function Authorization() {
 
         if (a.type === "oauth2") {
           return (
-            <FormItem label="Bearer Token" key={a.key + "-oauth2"}>
+            <FormItem
+              label={translate({
+                id: "theme.authorization.bearerToken",
+                message: "Bearer Token",
+              })}
+              key={a.key + "-oauth2"}
+            >
               <FormTextInput
-                placeholder="Bearer Token"
+                placeholder={translate({
+                  id: "theme.authorization.bearerToken",
+                  message: "Bearer Token",
+                })}
                 password
                 value={data[a.key].token ?? ""}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,9 +114,17 @@ function Authorization() {
         if (a.type === "http" && a.scheme === "basic") {
           return (
             <React.Fragment key={a.key + "-basic"}>
-              <FormItem label="Username">
+              <FormItem
+                label={translate({
+                  id: "theme.authorization.username",
+                  message: "Username",
+                })}
+              >
                 <FormTextInput
-                  placeholder="Username"
+                  placeholder={translate({
+                    id: "theme.authorization.username",
+                    message: "Username",
+                  })}
                   value={data[a.key].username ?? ""}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const value = e.target.value;
@@ -106,9 +138,17 @@ function Authorization() {
                   }}
                 />
               </FormItem>
-              <FormItem label="Password">
+              <FormItem
+                label={translate({
+                  id: "theme.authorization.password",
+                  message: "Password",
+                })}
+              >
                 <FormTextInput
-                  placeholder="Password"
+                  placeholder={translate({
+                    id: "theme.authorization.password",
+                    message: "Password",
+                  })}
                   password
                   value={data[a.key].password ?? ""}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

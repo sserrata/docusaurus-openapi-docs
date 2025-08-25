@@ -5,6 +5,8 @@
  * LICENSE file in the root directory of this source tree.
  * ========================================================================== */
 
+import { translate } from "@docusaurus/Translate";
+
 import { SchemaObject } from "../types";
 
 function prettyName(schema: SchemaObject, circular?: boolean) {
@@ -72,7 +74,11 @@ export function getQualifierMessage(schema?: SchemaObject): string | undefined {
     return getQualifierMessage(schema.items);
   }
 
-  let message = "**Possible values:** ";
+  const possibleValues = translate({
+    id: "theme.schema.possibleValues",
+    message: "Possible values:",
+  });
+  let message = `**${possibleValues}** `;
 
   let qualifierGroups = [];
 

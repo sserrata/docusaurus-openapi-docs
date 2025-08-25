@@ -8,6 +8,7 @@
 import React from "react";
 
 import Link from "@docusaurus/Link";
+import { translate } from "@docusaurus/Translate";
 import { useTypedSelector } from "@theme/ApiItem/hooks";
 
 function SecuritySchemes(props: any) {
@@ -26,7 +27,11 @@ function SecuritySchemes(props: any) {
     <details className="openapi-security__details" open={false}>
       <summary className="openapi-security__summary-container">
         <h4 className="openapi-security__summary-header">
-          Authorization: {selectedAuth[0].name ?? selectedAuth[0].type}
+          {translate({
+            id: "theme.authorization.label",
+            message: "Authorization:",
+          })}{" "}
+          {selectedAuth[0].name ?? selectedAuth[0].type}
         </h4>
       </summary>
       {selectedAuth.map((auth: any) => {
@@ -48,16 +53,34 @@ function SecuritySchemes(props: any) {
                   }}
                 >
                   <span>
-                    <strong>name:</strong>{" "}
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.name",
+                        message: "name",
+                      })}
+                      :
+                    </strong>{" "}
                     <Link to={infoAuthPath}>{name ?? key}</Link>
                   </span>
                   <span>
-                    <strong>type: </strong>
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.type",
+                        message: "type",
+                      })}
+                      :
+                    </strong>
                     {type}
                   </span>
                   {scopes && scopes.length > 0 && (
                     <span>
-                      <strong>scopes: </strong>
+                      <strong>
+                        {translate({
+                          id: "theme.authorization.scopes",
+                          message: "scopes",
+                        })}
+                        :
+                      </strong>
                       <code>
                         {auth.scopes.length > 0 ? auth.scopes.toString() : "[]"}
                       </code>
@@ -66,7 +89,13 @@ function SecuritySchemes(props: any) {
                   {Object.keys(rest).map((k, i) => {
                     return (
                       <span key={k}>
-                        <strong>{k}: </strong>
+                        <strong>
+                          {translate({
+                            id: `theme.authorization.${k}`,
+                            message: k,
+                          })}
+                          :
+                        </strong>
                         {typeof rest[k] === "object"
                           ? JSON.stringify(rest[k], null, 2)
                           : String(rest[k])}
@@ -89,16 +118,34 @@ function SecuritySchemes(props: any) {
                   }}
                 >
                   <span>
-                    <strong>name:</strong>{" "}
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.name",
+                        message: "name",
+                      })}
+                      :
+                    </strong>{" "}
                     <Link to={infoAuthPath}>{name ?? key}</Link>
                   </span>
                   <span>
-                    <strong>type: </strong>
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.type",
+                        message: "type",
+                      })}
+                      :
+                    </strong>
                     {type}
                   </span>
                   {scopes && scopes.length > 0 && (
                     <span>
-                      <strong>scopes: </strong>
+                      <strong>
+                        {translate({
+                          id: "theme.authorization.scopes",
+                          message: "scopes",
+                        })}
+                        :
+                      </strong>
                       <code>
                         {auth.scopes.length > 0 ? auth.scopes.toString() : "[]"}
                       </code>
@@ -107,7 +154,13 @@ function SecuritySchemes(props: any) {
                   {Object.keys(rest).map((k, i) => {
                     return (
                       <span key={k}>
-                        <strong>{k}: </strong>
+                        <strong>
+                          {translate({
+                            id: `theme.authorization.${k}`,
+                            message: k,
+                          })}
+                          :
+                        </strong>
                         {typeof rest[k] === "object"
                           ? JSON.stringify(rest[k], null, 2)
                           : String(rest[k])}
@@ -128,15 +181,30 @@ function SecuritySchemes(props: any) {
                 }}
               >
                 <span>
-                  <strong>name:</strong>{" "}
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.name",
+                      message: "name",
+                    })}
+                    :
+                  </strong>{" "}
                   <Link to={infoAuthPath}>{auth.name ?? auth.key}</Link>
                 </span>
                 <span>
-                  <strong>type: </strong>
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.type",
+                      message: "type",
+                    })}
+                    :
+                  </strong>
                   {auth.type}
                 </span>
                 <span>
-                  <strong>in: </strong>
+                  <strong>
+                    {translate({ id: "theme.authorization.in", message: "in" })}
+                    :
+                  </strong>
                   {auth.in}
                 </span>
               </pre>
@@ -156,16 +224,34 @@ function SecuritySchemes(props: any) {
                 }}
               >
                 <span>
-                  <strong>name:</strong>{" "}
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.name",
+                      message: "name",
+                    })}
+                    :
+                  </strong>{" "}
                   <Link to={infoAuthPath}>{name ?? key}</Link>
                 </span>
                 <span>
-                  <strong>type: </strong>
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.type",
+                      message: "type",
+                    })}
+                    :
+                  </strong>
                   {type}
                 </span>
                 {scopes && scopes.length > 0 && (
                   <span>
-                    <strong>scopes: </strong>
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.scopes",
+                        message: "scopes",
+                      })}
+                      :
+                    </strong>
                     <code>
                       {auth.scopes.length > 0 ? auth.scopes.toString() : "[]"}
                     </code>
@@ -174,7 +260,13 @@ function SecuritySchemes(props: any) {
                 {Object.keys(rest).map((k, i) => {
                   return (
                     <span key={k}>
-                      <strong>{k}: </strong>
+                      <strong>
+                        {translate({
+                          id: `theme.authorization.${k}`,
+                          message: k,
+                        })}
+                        :
+                      </strong>
                       {typeof rest[k] === "object"
                         ? JSON.stringify(rest[k], null, 2)
                         : String(rest[k])}
@@ -198,16 +290,34 @@ function SecuritySchemes(props: any) {
                 }}
               >
                 <span>
-                  <strong>name:</strong>{" "}
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.name",
+                      message: "name",
+                    })}
+                    :
+                  </strong>{" "}
                   <Link to={infoAuthPath}>{name ?? key}</Link>
                 </span>
                 <span>
-                  <strong>type: </strong>
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.type",
+                      message: "type",
+                    })}
+                    :
+                  </strong>
                   {type}
                 </span>
                 {scopes && scopes.length > 0 && (
                   <span>
-                    <strong>scopes: </strong>
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.scopes",
+                        message: "scopes",
+                      })}
+                      :
+                    </strong>
                     <code>
                       {auth.scopes.length > 0 ? auth.scopes.toString() : "[]"}
                     </code>
@@ -216,7 +326,13 @@ function SecuritySchemes(props: any) {
                 {Object.keys(rest).map((k, i) => {
                   return (
                     <span key={k}>
-                      <strong>{k}: </strong>
+                      <strong>
+                        {translate({
+                          id: `theme.authorization.${k}`,
+                          message: k,
+                        })}
+                        :
+                      </strong>
                       {typeof rest[k] === "object"
                         ? JSON.stringify(rest[k], null, 2)
                         : String(rest[k])}
@@ -226,7 +342,13 @@ function SecuritySchemes(props: any) {
                 {flows && (
                   <span>
                     <code>
-                      <strong>flows: </strong>
+                      <strong>
+                        {translate({
+                          id: "theme.authorization.flows",
+                          message: "flows",
+                        })}
+                        :
+                      </strong>
                       {JSON.stringify(flows, null, 2)}
                     </code>
                   </span>
@@ -248,16 +370,34 @@ function SecuritySchemes(props: any) {
                 }}
               >
                 <span>
-                  <strong>name:</strong>{" "}
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.name",
+                      message: "name",
+                    })}
+                    :
+                  </strong>{" "}
                   <Link to={infoAuthPath}>{name ?? key}</Link>
                 </span>
                 <span>
-                  <strong>type: </strong>
+                  <strong>
+                    {translate({
+                      id: "theme.authorization.type",
+                      message: "type",
+                    })}
+                    :
+                  </strong>
                   {type}
                 </span>
                 {scopes && scopes.length > 0 && (
                   <span>
-                    <strong>scopes: </strong>
+                    <strong>
+                      {translate({
+                        id: "theme.authorization.scopes",
+                        message: "scopes",
+                      })}
+                      :
+                    </strong>
                     <code>
                       {auth.scopes.length > 0 ? auth.scopes.toString() : "[]"}
                     </code>
@@ -266,7 +406,13 @@ function SecuritySchemes(props: any) {
                 {Object.keys(rest).map((k, i) => {
                   return (
                     <span key={k}>
-                      <strong>{k}: </strong>
+                      <strong>
+                        {translate({
+                          id: `theme.authorization.${k}`,
+                          message: k,
+                        })}
+                        :
+                      </strong>
                       {typeof rest[k] === "object"
                         ? JSON.stringify(rest[k], null, 2)
                         : String(rest[k])}

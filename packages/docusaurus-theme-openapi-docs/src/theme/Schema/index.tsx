@@ -7,6 +7,7 @@
 
 import React from "react";
 
+import { translate } from "@docusaurus/Translate";
 import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
 import Details from "@theme/Details";
 import DiscriminatorTabs from "@theme/DiscriminatorTabs";
@@ -91,7 +92,9 @@ const Summary: React.FC<SummaryProps> = ({
         )}
         {nullable && <span className="openapi-schema__nullable">nullable</span>}
         {isRequired && (
-          <span className="openapi-schema__required">required</span>
+          <span className="openapi-schema__required">
+            {translate({ id: "theme.schema.required", message: "required" })}
+          </span>
         )}
         {deprecated && (
           <span className="openapi-schema__deprecated">deprecated</span>
@@ -109,10 +112,14 @@ interface SchemaProps {
 
 const AnyOneOf: React.FC<SchemaProps> = ({ schema, schemaType }) => {
   const type = schema.oneOf ? "oneOf" : "anyOf";
+  const translatedType = translate({
+    id: `theme.schema.${type}`,
+    message: type,
+  });
   return (
     <>
       <span className="badge badge--info" style={{ marginBottom: "1rem" }}>
-        {type}
+        {translatedType}
       </span>
       <SchemaTabs>
         {schema[type]?.map((anyOneSchema: any, index: number) => {
@@ -254,7 +261,12 @@ const PropertyDiscriminator: React.FC<SchemaEdgeProps> = ({
             )}
             {required && <span className="openapi-schema__divider"></span>}
             {required && (
-              <span className="openapi-schema__required">required</span>
+              <span className="openapi-schema__required">
+                {translate({
+                  id: "theme.schema.required",
+                  message: "required",
+                })}
+              </span>
             )}
           </span>
           <div style={{ marginLeft: "1rem" }}>

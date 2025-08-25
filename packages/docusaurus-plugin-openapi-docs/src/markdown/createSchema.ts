@@ -40,11 +40,12 @@ export function mergeAllOf(allOf: SchemaObject) {
  */
 function createAnyOneOf(schema: SchemaObject): any {
   const type = schema.oneOf ? "oneOf" : "anyOf";
+  const translatedType = `<Translate id="theme.schema.${type}">${type}</Translate>`;
   return create("div", {
     children: [
       create("span", {
         className: "badge badge--info",
-        children: type,
+        children: translatedType,
         style: { marginBottom: "1rem" },
       }),
       create("SchemaTabs", {
@@ -375,7 +376,8 @@ function createDetailsNode(
                     () => [
                       create("span", {
                         className: "openapi-schema__required",
-                        children: "required",
+                        children:
+                          '<Translate id="theme.schema.required">required</Translate>',
                       }),
                     ]
                   ),
@@ -530,7 +532,8 @@ function createPropertyDiscriminator(
             guard(required, () => [
               create("span", {
                 className: "openapi-schema__required",
-                children: "required",
+                children:
+                  '<Translate id="theme.schema.required">required</Translate>',
               }),
             ]),
           ],

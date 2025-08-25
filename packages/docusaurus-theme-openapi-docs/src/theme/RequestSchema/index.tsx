@@ -8,6 +8,7 @@
 import React from "react";
 
 import BrowserOnly from "@docusaurus/BrowserOnly";
+import { translate } from "@docusaurus/Translate";
 import Details from "@theme/Details";
 import Markdown from "@theme/Markdown";
 import MimeTabs from "@theme/MimeTabs"; // Assume these components exist
@@ -64,10 +65,16 @@ const RequestSchemaComponent: React.FC<Props> = ({ title, body, style }) => {
                   <>
                     <summary>
                       <h3 className="openapi-markdown__details-summary-header-body">
-                        {title}
+                        {translate({
+                          id: `theme.RequestSchema.${title.toLowerCase()}`,
+                          message: title,
+                        })}
                         {body.required === true && (
                           <span className="openapi-schema__required">
-                            required
+                            {translate({
+                              id: "theme.schema.required",
+                              message: "required",
+                            })}
                           </span>
                         )}
                       </h3>
@@ -114,13 +121,19 @@ const RequestSchemaComponent: React.FC<Props> = ({ title, body, style }) => {
             <>
               <summary>
                 <h3 className="openapi-markdown__details-summary-header-body">
-                  {title}
+                  {translate({
+                    id: `theme.RequestSchema.${title.toLowerCase()}`,
+                    message: title,
+                  })}
                   {firstBody.type === "array" && (
                     <span style={{ opacity: "0.6" }}> array</span>
                   )}
                   {body.required && (
                     <strong className="openapi-schema__required">
-                      required
+                      {translate({
+                        id: "theme.schema.required",
+                        message: "required",
+                      })}
                     </strong>
                   )}
                 </h3>

@@ -6,9 +6,11 @@
  * ========================================================================== */
 
 // @ts-nocheck
+
 import React, { useState } from "react";
 
 import { useDoc } from "@docusaurus/plugin-content-docs/client";
+import { translate } from "@docusaurus/Translate";
 import Accept from "@theme/ApiExplorer/Accept";
 import Authorization from "@theme/ApiExplorer/Authorization";
 import Body from "@theme/ApiExplorer/Body";
@@ -264,7 +266,11 @@ function Request({ item }: { item: ApiItem }) {
                 Body
                 {requestBodyRequired && (
                   <span className="openapi-schema__required">
-                    &nbsp;required
+                    &nbsp;
+                    {translate({
+                      id: "theme.schema.required",
+                      message: "required",
+                    })}
                   </span>
                 )}
               </summary>
