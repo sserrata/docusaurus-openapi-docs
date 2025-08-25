@@ -10,6 +10,8 @@ import React, { ReactNode } from "react";
 import { translate } from "@docusaurus/Translate";
 import Markdown from "@theme/Markdown";
 import clsx from "clsx";
+import { translate } from "@docusaurus/Translate";
+import { OPENAPI_SCHEMA_ITEM } from "@theme/translationIds";
 
 import { guard } from "../../markdown/utils";
 
@@ -92,17 +94,21 @@ export default function SchemaItem(props: Props) {
     Array.isArray(required) ? required.includes(name) : required,
     () => (
       <span className="openapi-schema__required">
-        {translate({ id: "theme.schema.required", message: "required" })}
+        {translate({ id: OPENAPI_SCHEMA_ITEM.REQUIRED, message: "required" })}
       </span>
     )
   );
 
   const renderDeprecated = guard(deprecated, () => (
-    <span className="openapi-schema__deprecated">deprecated</span>
+    <span className="openapi-schema__deprecated">
+      {translate({ id: OPENAPI_SCHEMA_ITEM.DEPRECATED, message: "deprecated" })}
+    </span>
   ));
 
   const renderNullable = guard(nullable, () => (
-    <span className="openapi-schema__nullable">nullable</span>
+    <span className="openapi-schema__nullable">
+      {translate({ id: OPENAPI_SCHEMA_ITEM.NULLABLE, message: "nullable" })}
+    </span>
   ));
 
   const renderEnumDescriptions = guard(
@@ -133,7 +139,12 @@ export default function SchemaItem(props: Props) {
       if (typeof defaultValue === "string") {
         return (
           <div>
-            <strong>Default value: </strong>
+            <strong>
+              {translate({
+                id: OPENAPI_SCHEMA_ITEM.DEFAULT_VALUE,
+                message: "Default value:",
+              })}{" "}
+            </strong>
             <span>
               <code>{defaultValue}</code>
             </span>
@@ -142,7 +153,12 @@ export default function SchemaItem(props: Props) {
       }
       return (
         <div>
-          <strong>Default value: </strong>
+          <strong>
+            {translate({
+              id: OPENAPI_SCHEMA_ITEM.DEFAULT_VALUE,
+              message: "Default value:",
+            })}{" "}
+          </strong>
           <span>
             <code>{JSON.stringify(defaultValue)}</code>
           </span>
@@ -157,7 +173,12 @@ export default function SchemaItem(props: Props) {
       if (typeof example === "string") {
         return (
           <div>
-            <strong>Example: </strong>
+            <strong>
+              {translate({
+                id: OPENAPI_SCHEMA_ITEM.EXAMPLE,
+                message: "Example:",
+              })}{" "}
+            </strong>
             <span>
               <code>{example}</code>
             </span>
@@ -166,7 +187,12 @@ export default function SchemaItem(props: Props) {
       }
       return (
         <div>
-          <strong>Example: </strong>
+          <strong>
+            {translate({
+              id: OPENAPI_SCHEMA_ITEM.EXAMPLE,
+              message: "Example:",
+            })}{" "}
+          </strong>
           <span>
             <code>{JSON.stringify(example)}</code>
           </span>
@@ -181,7 +207,12 @@ export default function SchemaItem(props: Props) {
       if (typeof constValue === "string") {
         return (
           <div>
-            <strong>Constant value: </strong>
+            <strong>
+              {translate({
+                id: OPENAPI_SCHEMA_ITEM.CONSTANT_VALUE,
+                message: "Constant value:",
+              })}{" "}
+            </strong>
             <span>
               <code>{constValue}</code>
             </span>
@@ -190,7 +221,12 @@ export default function SchemaItem(props: Props) {
       }
       return (
         <div>
-          <strong>Constant value: </strong>
+          <strong>
+            {translate({
+              id: OPENAPI_SCHEMA_ITEM.CONSTANT_VALUE,
+              message: "Constant value:",
+            })}{" "}
+          </strong>
           <span>
             <code>{JSON.stringify(constValue)}</code>
           </span>

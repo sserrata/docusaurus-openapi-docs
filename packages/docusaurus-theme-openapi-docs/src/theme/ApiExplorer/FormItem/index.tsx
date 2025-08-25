@@ -8,6 +8,8 @@
 import React from "react";
 
 import { translate } from "@docusaurus/Translate";
+import { OPENAPI_SCHEMA_ITEM } from "@theme/translationIds";
+
 import clsx from "clsx";
 
 export interface Props {
@@ -27,7 +29,7 @@ function FormItem({ label, type, required, children, className }: Props) {
       {type && <span style={{ opacity: 0.6 }}> — {type}</span>}
       {required && (
         <span className="openapi-schema__required">
-          {translate({ id: "theme.schema.required", message: "required" })}
+          {translate({ id: OPENAPI_SCHEMA_ITEM.REQUIRED, message: "required" })}
         </span>
       )}
       <div>{children}</div>

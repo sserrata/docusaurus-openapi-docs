@@ -26,6 +26,7 @@ import {
 } from "@theme/ApiExplorer/Response/slice";
 import Server from "@theme/ApiExplorer/Server";
 import { useTypedDispatch, useTypedSelector } from "@theme/ApiItem/hooks";
+import { OPENAPI_REQUEST } from "@theme/translationIds";
 import { ParameterObject } from "docusaurus-plugin-openapi-docs/src/openapi/types";
 import { ApiItem } from "docusaurus-plugin-openapi-docs/src/types";
 import * as sdk from "postman-collection";
@@ -119,7 +120,14 @@ function Request({ item }: { item: ApiItem }) {
   };
 
   const onSubmit = async (data) => {
-    dispatch(setResponse("Fetching..."));
+    dispatch(
+      setResponse(
+        translate({
+          id: OPENAPI_REQUEST.FETCHING_MESSAGE,
+          message: "Fetching...",
+        })
+      )
+    );
     try {
       await delay(1200);
       const res = await makeRequest(postmanRequest, proxy, body);
@@ -130,7 +138,14 @@ function Request({ item }: { item: ApiItem }) {
       }
     } catch (e) {
       console.log(e);
-      dispatch(setResponse("Connection failed"));
+      dispatch(
+        setResponse(
+          translate({
+            id: OPENAPI_REQUEST.CONNECTION_FAILED,
+            message: "Connection failed",
+          })
+        )
+      );
       dispatch(clearCode());
       dispatch(clearHeaders());
     }
@@ -180,20 +195,31 @@ function Request({ item }: { item: ApiItem }) {
         onSubmit={methods.handleSubmit(onSubmit)}
       >
         <div className="openapi-explorer__request-header-container">
-          <span className="openapi-explorer__request-title">Request </span>
+          <span className="openapi-explorer__request-title">
+            {translate({
+              id: OPENAPI_REQUEST.REQUEST_TITLE,
+              message: "Request",
+            })}
+          </span>
           {allDetailsExpanded ? (
             <span
               className="openapi-explorer__expand-details-btn"
               onClick={collapseAllDetails}
             >
-              Collapse all
+              {translate({
+                id: OPENAPI_REQUEST.COLLAPSE_ALL,
+                message: "Collapse all",
+              })}
             </span>
           ) : (
             <span
               className="openapi-explorer__expand-details-btn"
               onClick={expandAllDetails}
             >
-              Expand all
+              {translate({
+                id: OPENAPI_REQUEST.EXPAND_ALL,
+                message: "Expand all",
+              })}
             </span>
           )}
         </div>
@@ -210,7 +236,10 @@ function Request({ item }: { item: ApiItem }) {
                   setExpandServer(!expandServer);
                 }}
               >
-                Base URL
+                {translate({
+                  id: OPENAPI_REQUEST.BASE_URL_TITLE,
+                  message: "Base URL",
+                })}
               </summary>
               <Server />
             </details>
@@ -227,7 +256,7 @@ function Request({ item }: { item: ApiItem }) {
                   setExpandAuth(!expandAuth);
                 }}
               >
-                Auth
+                {translate({ id: OPENAPI_REQUEST.AUTH_TITLE, message: "Auth" })}
               </summary>
               <Authorization />
             </details>
@@ -246,7 +275,10 @@ function Request({ item }: { item: ApiItem }) {
                   setExpandParams(!expandParams);
                 }}
               >
-                Parameters
+                {translate({
+                  id: OPENAPI_REQUEST.PARAMETERS_TITLE,
+                  message: "Parameters",
+                })}
               </summary>
               <ParamOptions />
             </details>
@@ -263,12 +295,12 @@ function Request({ item }: { item: ApiItem }) {
                   setExpandBody(!expandBody);
                 }}
               >
-                Body
+                {translate({ id: OPENAPI_REQUEST.BODY_TITLE, message: "Body" })}
                 {requestBodyRequired && (
                   <span className="openapi-schema__required">
                     &nbsp;
                     {translate({
-                      id: "theme.schema.required",
+                      id: OPENAPI_REQUEST.REQUIRED_LABEL,
                       message: "required",
                     })}
                   </span>
@@ -296,14 +328,20 @@ function Request({ item }: { item: ApiItem }) {
                   setExpandAccept(!expandAccept);
                 }}
               >
-                Accept
+                {translate({
+                  id: OPENAPI_REQUEST.ACCEPT_TITLE,
+                  message: "Accept",
+                })}
               </summary>
               <Accept />
             </details>
           )}
           {showRequestButton && item.method !== "event" && (
             <button className="openapi-explorer__request-btn" type="submit">
-              Send API Request
+              {translate({
+                id: OPENAPI_REQUEST.SEND_BUTTON,
+                message: "Send API Request",
+              })}
             </button>
           )}
         </div>
