@@ -11,6 +11,7 @@ import { translate } from "@docusaurus/Translate";
 import { OPENAPI_SCHEMA_ITEM } from "@theme/translationIds";
 
 import BrowserOnly from "@docusaurus/BrowserOnly";
+import { translate } from "@docusaurus/Translate";
 import Details from "@theme/Details";
 import Markdown from "@theme/Markdown";
 import MimeTabs from "@theme/MimeTabs"; // Assume these components exist

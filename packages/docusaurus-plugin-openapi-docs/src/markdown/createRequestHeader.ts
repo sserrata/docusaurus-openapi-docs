@@ -8,17 +8,18 @@
 import { create } from "./utils";
 
 export function createRequestHeader(header: string) {
+  const id = header.replace(" ", "-").toLowerCase();
   return [
-    create(
-      "Heading",
-      {
-        children: header,
-        id: header.replace(" ", "-").toLowerCase(),
-        as: "h2",
-        className: "openapi-tabs__heading",
-      },
-      { inline: true }
-    ),
+    create("Heading", {
+      id,
+      as: "h2",
+      className: "openapi-tabs__heading",
+      children: [
+        `<Translate id="theme.RequestHeader.${id}">`,
+        header,
+        "</Translate>",
+      ],
+    }),
     `\n\n`,
   ];
 }

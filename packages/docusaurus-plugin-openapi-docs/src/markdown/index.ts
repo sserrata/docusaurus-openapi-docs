@@ -66,6 +66,7 @@ export function createApiPageMD({
   frontMatter,
 }: ApiPageMetadata) {
   return render([
+    `import Translate from "@docusaurus/Translate";\n`,
     `import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";\n`,
     `import ParamsDetails from "@theme/ParamsDetails";\n`,
     `import RequestSchema from "@theme/RequestSchema";\n`,
