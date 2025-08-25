@@ -42,7 +42,15 @@ export interface Props {
 
 const getEnumDescriptionMarkdown = (enumDescriptions?: [string, string][]) => {
   if (enumDescriptions?.length) {
-    return `| Enum Value | Description |
+    const enumHeader = translate({
+      id: "theme.enum.value",
+      message: "Enum Value",
+    });
+    const descHeader = translate({
+      id: "theme.enum.description",
+      message: "Description",
+    });
+    return `| ${enumHeader} | ${descHeader} |
 | ---- | ----- |
 ${enumDescriptions
   .map((desc) => {

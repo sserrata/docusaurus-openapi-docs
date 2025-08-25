@@ -13,7 +13,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -399,7 +399,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          anyOf
+          <Translate id=\\"theme.schema.anyOf\\">anyOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"An int or a bool\\"} value={\\"0-item-properties\\"}>
@@ -408,7 +408,7 @@ Array [
                 className={\\"badge badge--info\\"}
                 style={{ marginBottom: \\"1rem\\" }}
               >
-                oneOf
+                <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
               </span>
               <SchemaTabs>
                 <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -451,7 +451,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          anyOf
+          <Translate id=\\"theme.schema.anyOf\\">anyOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -477,7 +477,7 @@ exports[`createNodes discriminator should handle basic discriminator with mappin
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -554,7 +554,7 @@ exports[`createNodes discriminator should handle basic discriminator with oneOf 
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -612,7 +612,7 @@ exports[`createNodes discriminator should handle discriminator with additional p
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -679,7 +679,7 @@ Array [
 ",
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -774,7 +774,7 @@ Array [
 ",
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -860,7 +860,7 @@ exports[`createNodes discriminator should handle discriminator with nested schem
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -958,7 +958,7 @@ exports[`createNodes discriminator should handle discriminator with required pro
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1016,7 +1016,7 @@ exports[`createNodes discriminator should handle discriminator with required pro
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1093,7 +1093,7 @@ exports[`createNodes discriminator should handle discriminator with shared prope
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1160,7 +1160,7 @@ exports[`createNodes discriminator should handle discriminator with shared prope
 Array [
   "<div>
   <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-    oneOf
+    <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
   </span>
   <SchemaTabs>
     <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1255,7 +1255,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1345,7 +1345,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1365,7 +1365,7 @@ Array [
                       className={\\"badge badge--info\\"}
                       style={{ marginBottom: \\"1rem\\" }}
                     >
-                      oneOf
+                      <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
                     </span>
                     <SchemaTabs>
                       <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1415,7 +1415,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1478,7 +1478,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1518,7 +1518,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>
@@ -1572,7 +1572,7 @@ Array [
     <div style={{ marginLeft: \\"1rem\\" }}>
       <div>
         <span className={\\"badge badge--info\\"} style={{ marginBottom: \\"1rem\\" }}>
-          oneOf
+          <Translate id=\\"theme.schema.oneOf\\">oneOf</Translate>
         </span>
         <SchemaTabs>
           <TabItem label={\\"MOD1\\"} value={\\"0-item-properties\\"}>

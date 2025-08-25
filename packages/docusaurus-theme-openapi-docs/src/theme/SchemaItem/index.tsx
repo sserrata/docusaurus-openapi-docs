@@ -7,6 +7,7 @@
 
 import React, { ReactNode } from "react";
 
+import { translate } from "@docusaurus/Translate";
 import Markdown from "@theme/Markdown";
 import clsx from "clsx";
 import { translate } from "@docusaurus/Translate";
@@ -38,7 +39,15 @@ const transformEnumDescriptions = (
 
 const getEnumDescriptionMarkdown = (enumDescriptions?: [string, string][]) => {
   if (enumDescriptions?.length) {
-    return `| Enum Value | Description |
+    const enumHeader = translate({
+      id: "theme.enum.value",
+      message: "Enum Value",
+    });
+    const descHeader = translate({
+      id: "theme.enum.description",
+      message: "Description",
+    });
+    return `| ${enumHeader} | ${descHeader} |
 | ---- | ----- |
 ${enumDescriptions
   .map((desc) => {
