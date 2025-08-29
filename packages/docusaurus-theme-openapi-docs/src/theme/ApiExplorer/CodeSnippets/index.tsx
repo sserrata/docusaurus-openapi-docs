@@ -5,16 +5,19 @@
  * LICENSE file in the root directory of this source tree.
  * ========================================================================== */
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import { Postman } from "@har-sdk/core";
+import { postman2har } from "@har-sdk/postman";
 import ApiCodeBlock from "@theme/ApiExplorer/ApiCodeBlock";
 import buildPostmanRequest from "@theme/ApiExplorer/buildPostmanRequest";
 import CodeTabs from "@theme/ApiExplorer/CodeTabs";
 import { useTypedSelector } from "@theme/ApiItem/hooks";
+import { HTTPSnippet, TargetId } from "httpsnippet-lite";
 import cloneDeep from "lodash/cloneDeep";
-import codegen from "postman-code-generators";
 import * as sdk from "postman-collection";
+import type { Param } from "@theme/ApiExplorer/ParamOptions/slice";
 
 import { CodeSample, Language } from "./code-snippets-types";
 import {
@@ -108,20 +111,43 @@ function CodeSnippets({
 
   // User-defined languages array
   // Can override languageSet, change order of langs, override options and variants
-  const userDefinedLanguageSet =
-    (siteConfig?.themeConfig?.languageTabs as Language[] | undefined) ??
-    languageSet;
+  const languageAliases: Record<
+    string,
+    { language: string; variant?: string }
+  > = {
+    curl: { language: "shell", variant: "curl" },
+    nodejs: { language: "node" },
+  };
+
+  const userDefinedLanguageSet = (
+    siteConfig?.themeConfig?.languageTabs as Language[] | undefined
+  )
+    ?.map((lang) => {
+      const alias = languageAliases[lang.language];
+      if (alias) {
+        return {
+          ...lang,
+          ...alias,
+          label: lang.label ?? lang.language,
+        };
+      }
+      return lang;
+    })
+    .filter((lang) => languageSet.some((ls) => ls.language === lang.language));
+
+  const finalLanguageSet =
+    userDefinedLanguageSet && userDefinedLanguageSet.length
+      ? userDefinedLanguageSet
+      : languageSet;
 
   // Filter languageSet by user-defined langs
-  const filteredLanguageSet = languageSet.filter((ls) => {
-    return userDefinedLanguageSet?.some((lang) => {
-      return lang.language === ls.language;
-    });
-  });
+  const filteredLanguageSet = languageSet.filter((ls) =>
+    finalLanguageSet.some((lang) => lang.language === ls.language)
+  );
 
   // Merge user-defined langs into languageSet
   const mergedLangs = mergeCodeSampleLanguage(
-    mergeArraysbyLanguage(userDefinedLanguageSet, filteredLanguageSet),
+    mergeArraysbyLanguage(finalLanguageSet, filteredLanguageSet),
     codeSamples
   );
 
@@ -130,8 +156,6 @@ function CodeSnippets({
     (lang) =>
       lang.language === localStorage.getItem("docusaurus.tab.code-samples")
   );
-  const [selectedVariant, setSelectedVariant] = useState<string | undefined>();
-  const [selectedSample, setSelectedSample] = useState<string | undefined>();
   const [language, setLanguage] = useState(() => {
     // Return first index if only 1 user-defined language exists
     if (mergedLangs.length === 1) {
@@ -140,6 +164,12 @@ function CodeSnippets({
     // Fall back to language in localStorage or first user-defined language
     return defaultLang[0] ?? mergedLangs[0];
   });
+  const [selectedVariant, setSelectedVariant] = useState<string | undefined>(
+    language.variant
+  );
+  const [selectedSample, setSelectedSample] = useState<string | undefined>(
+    language.sample
+  );
   const [codeText, setCodeText] = useState<string>("");
   const [codeSampleCodeText, setCodeSampleCodeText] = useState<
     string | (() => string)
@@ -149,44 +179,51 @@ function CodeSnippets({
     if (language && !!language.sample) {
       setCodeSampleCodeText(getCodeSampleSourceFromLanguage(language));
     }
+  }, [language, selectedSample]);
 
-    if (language && !!language.options) {
-      codegen.convert(
-        language.language,
-        language.variant,
-        cleanedPostmanRequest,
-        language.options,
-        (error: any, snippet: string) => {
-          if (error) {
-            return;
-          }
-          setCodeText(snippet);
-        }
-      );
-    } else if (language && !language.options) {
+  useEffect(() => {
+    async function generateSnippet() {
+      if (!language) {
+        setCodeText("");
+        return;
+      }
       const langSource = mergedLangs.filter(
         (lang) => lang.language === language.language
       );
+      const mergedLanguage = language.options
+        ? language
+        : { ...langSource[0], ...language };
+      const collection = new sdk.Collection({
+        item: [{ name: "request", request: cleanedPostmanRequest }],
+      });
 
-      // Merges user-defined language with default languageSet
-      // This allows users to define only the minimal properties necessary in languageTabs
-      // User-defined properties should override languageSet properties
-      const mergedLanguage = { ...langSource[0], ...language };
-      codegen.convert(
-        mergedLanguage.language,
-        mergedLanguage.variant,
-        cleanedPostmanRequest,
-        mergedLanguage.options,
-        (error: any, snippet: string) => {
-          if (error) {
-            return;
-          }
-          setCodeText(snippet);
-        }
+      const environment = Object.fromEntries(
+        pathParams.map((param: Param) => [
+          param.name,
+          Array.isArray(param.value)
+            ? param.value[0]
+            : (param.value ?? `<${param.name}>`),
+        ])
       );
-    } else {
-      setCodeText("");
+
+      const [harRequest] = await postman2har(
+        {
+          ...collection.toJSON(),
+          info: {
+            schema:
+              "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+          },
+        } as Postman.Document,
+        { environment }
+      );
+      const snippet = await new HTTPSnippet(harRequest).convert(
+        mergedLanguage.language as TargetId,
+        selectedVariant ?? mergedLanguage.variant,
+        mergedLanguage.options
+      );
+      setCodeText(typeof snippet === "string" ? snippet : "");
     }
+    generateSnippet();
   }, [
     accept,
     body,
@@ -200,41 +237,8 @@ function CodeSnippets({
     server,
     cleanedPostmanRequest,
     mergedLangs,
+    selectedVariant,
   ]);
-  // no dependencies was intentionally set for this particular hook. it's safe as long as if conditions are set
-  useEffect(function onSelectedVariantUpdate() {
-    if (selectedVariant && selectedVariant !== language?.variant) {
-      codegen.convert(
-        language.language,
-        selectedVariant,
-        cleanedPostmanRequest,
-        language.options,
-        (error: any, snippet: string) => {
-          if (error) {
-            return;
-          }
-          setCodeText(snippet);
-        }
-      );
-    }
-  });
-
-  // no dependencies was intentionally set for this particular hook. it's safe as long as if conditions are set
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(function onSelectedSampleUpdate() {
-    if (
-      language &&
-      language.samples &&
-      language.samplesSources &&
-      selectedSample &&
-      selectedSample !== language.sample
-    ) {
-      const sampleIndex = language.samples.findIndex(
-        (smp) => smp === selectedSample
-      );
-      setCodeSampleCodeText(language.samplesSources[sampleIndex]);
-    }
-  });
 
   if (language === undefined) {
     return null;
@@ -258,7 +262,7 @@ function CodeSnippets({
           return (
             <CodeTab
               value={lang.language}
-              label={lang.language}
+              label={lang.label ?? lang.language}
               key={lang.language}
               attributes={{
                 className: `openapi-tabs__code-item--${lang.logoClass}`,
@@ -274,7 +278,7 @@ function CodeSnippets({
                   }}
                   includeSample={true}
                   currentLanguage={lang.language}
-                  defaultValue={selectedSample}
+                  defaultValue={selectedSample ?? language.sample}
                   languageSet={mergedLangs}
                   lazy
                 >
@@ -315,7 +319,7 @@ function CodeSnippets({
                 }}
                 includeVariant={true}
                 currentLanguage={lang.language}
-                defaultValue={selectedVariant}
+                defaultValue={selectedVariant ?? language.variant}
                 languageSet={mergedLangs}
                 lazy
               >
