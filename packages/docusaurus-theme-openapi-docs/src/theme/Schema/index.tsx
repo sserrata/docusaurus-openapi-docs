@@ -8,8 +8,6 @@
 import React from "react";
 
 import { translate } from "@docusaurus/Translate";
-import { OPENAPI_SCHEMA_ITEM } from "@theme/translationIds";
-
 import { ClosingArrayBracket, OpeningArrayBracket } from "@theme/ArrayBrackets";
 import Details from "@theme/Details";
 import DiscriminatorTabs from "@theme/DiscriminatorTabs";
@@ -17,6 +15,7 @@ import Markdown from "@theme/Markdown";
 import SchemaItem from "@theme/SchemaItem";
 import SchemaTabs from "@theme/SchemaTabs";
 import TabItem from "@theme/TabItem";
+import { OPENAPI_SCHEMA_ITEM } from "@theme/translationIds";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { merge } from "allof-merge";
 import clsx from "clsx";
@@ -132,20 +131,44 @@ const AnyOneOf: React.FC<SchemaProps> = ({ schema, schemaType }) => {
   const type = schema.oneOf
     ? translate({ id: OPENAPI_SCHEMA_ITEM.ONE_OF, message: "oneOf" })
     : translate({ id: OPENAPI_SCHEMA_ITEM.ANY_OF, message: "anyOf" });
+
+  // Generate a unique ID for this anyOf/oneOf to prevent tab value collisions
+  const uniqueId = React.useMemo(
+    () => Math.random().toString(36).substring(7),
+    []
+  );
+
   return (
     <>
       <span className="badge badge--info" style={{ marginBottom: "1rem" }}>
         {type}
       </span>
-      <SchemaTabs>
+      <SchemaTabs groupId={`schema-${uniqueId}`} lazy>
         {schema[key]?.map((anyOneSchema: any, index: number) => {
-          const label = anyOneSchema.title || anyOneSchema.type;
+          // Determine label for the tab
+          // If schema is just oneOf/anyOf without title/type, use a generic label
+          let label = anyOneSchema.title || anyOneSchema.type;
+          if (!label) {
+            if (anyOneSchema.oneOf) {
+              label = translate({
+                id: OPENAPI_SCHEMA_ITEM.ONE_OF,
+                message: "oneOf",
+              });
+            } else if (anyOneSchema.anyOf) {
+              label = translate({
+                id: OPENAPI_SCHEMA_ITEM.ANY_OF,
+                message: "anyOf",
+              });
+            } else {
+              label = `Option ${index + 1}`;
+            }
+          }
           return (
             // @ts-ignore
             <TabItem
               key={index}
               label={label}
-              value={`${index}-item-properties`}
+              value={`${uniqueId}-${index}-item`}
             >
               {/* Handle primitive types directly */}
               {(isPrimitive(anyOneSchema) || anyOneSchema.const) && (
@@ -178,9 +201,11 @@ const AnyOneOf: React.FC<SchemaProps> = ({ schema, schemaType }) => {
                 )}
 
               {/* Handle actual object types with properties or nested schemas */}
-              {anyOneSchema.type === "object" && anyOneSchema.properties && (
-                <Properties schema={anyOneSchema} schemaType={schemaType} />
-              )}
+              {/* Note: In OpenAPI, properties implies type: object even if not explicitly set */}
+              {(anyOneSchema.type === "object" || !anyOneSchema.type) &&
+                anyOneSchema.properties && (
+                  <Properties schema={anyOneSchema} schemaType={schemaType} />
+                )}
               {anyOneSchema.allOf && (
                 <SchemaNode schema={anyOneSchema} schemaType={schemaType} />
               )}
@@ -860,6 +885,48 @@ const SchemaNode: React.FC<SchemaProps> = ({ schema, schemaType }) => {
 
   // Handle allOf, oneOf, anyOf without discriminators
   if (schema.allOf) {
+    // Check if allOf contains multiple oneOf/anyOf items that should be rendered separately
+    const oneOfItems = schema.allOf.filter(
+      (item: any) => item.oneOf || item.anyOf
+    );
+    const hasMultipleChoices = oneOfItems.length > 1;
+
+    if (hasMultipleChoices) {
+      // Render each oneOf/anyOf constraint first, then shared properties
+      const mergedSchemas = mergeAllOf(schema) as SchemaObject;
+
+      if (
+        (schemaType === "request" && mergedSchemas.readOnly) ||
+        (schemaType === "response" && mergedSchemas.writeOnly)
+      ) {
+        return null;
+      }
+
+      return (
+        <div>
+          {/* Render all oneOf/anyOf constraints first */}
+          {schema.allOf.map((item: any, index: number) => {
+            if (item.oneOf || item.anyOf) {
+              return (
+                <div key={index}>
+                  <AnyOneOf schema={item} schemaType={schemaType} />
+                </div>
+              );
+            }
+            return null;
+          })}
+          {/* Then render shared properties from the merge */}
+          {mergedSchemas.properties && (
+            <Properties schema={mergedSchemas} schemaType={schemaType} />
+          )}
+          {mergedSchemas.items && (
+            <Items schema={mergedSchemas} schemaType={schemaType} />
+          )}
+        </div>
+      );
+    }
+
+    // For other allOf cases, use standard merge behavior
     const mergedSchemas = mergeAllOf(schema) as SchemaObject;
 
     if (
